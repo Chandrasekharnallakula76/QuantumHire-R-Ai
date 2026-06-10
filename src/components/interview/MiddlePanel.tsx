@@ -57,6 +57,59 @@ const getSpeechRecognition = (): SpeechRecognitionCtor | null => {
   return recognition ?? null
 }
 
+const decodeQuestionText = (value: string) =>
+  value
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&mdash;|&#8212;/gi, " - ")
+    .replace(/&ndash;|&#8211;/gi, " - ")
+    .replace(/\s+/g, " ")
+    .trim()
+
+const getQuestionDisplayParts = (
+  question: Question | null
+): { scenario: string; prompt: string; fullText: string } => {
+  const fallback = "Waiting for the next interview question..."
+
+  if (!question) {
+    return {
+      scenario: "",
+      prompt: fallback,
+      fullText: fallback,
+    }
+  }
+
+  const normalizedQuestion = decodeQuestionText(question.question)
+  const normalizedScenario = question.scenario
+    ? decodeQuestionText(question.scenario)
+    : ""
+
+  if (normalizedScenario) {
+    return {
+      scenario: normalizedScenario,
+      prompt: normalizedQuestion,
+      fullText: `Scenario: ${normalizedScenario} - ${normalizedQuestion}`,
+    }
+  }
+
+  const scenarioMatch = normalizedQuestion.match(
+    /^Scenario:\s*(.+?)\s*(?:-|—)\s*([^]+)$/i
+  )
+
+  if (scenarioMatch) {
+    return {
+      scenario: scenarioMatch[1].trim(),
+      prompt: scenarioMatch[2].trim(),
+      fullText: normalizedQuestion,
+    }
+  }
+
+  return {
+    scenario: "",
+    prompt: normalizedQuestion || fallback,
+    fullText: normalizedQuestion || fallback,
+  }
+}
+
 // ============================================================================
 // INNER COMPONENT 1: VIDEO STREAMS WITH DYNAMIC FACE-API SCANNING & ONNX
 // ============================================================================
@@ -142,6 +195,7 @@ function VideoStreams({
     useState(() => getSpeechRecognition() !== null)
   const isPersonalityCard =
     currentQuestion?.type === "ocean" || currentQuestion?.type === "16pf"
+  const questionDisplay = getQuestionDisplayParts(currentQuestion)
 
   useEffect(() => {
     setFreeText("")
@@ -926,16 +980,27 @@ function VideoStreams({
               )}
             </div>
 
-            <h3
-              title={
-                currentQuestion?.question ||
-                "Waiting for the next interview question..."
-              }
-              className="mt-1 text-[12px] leading-5 font-semibold text-slate-900 lg:line-clamp-4"
-            >
-              {currentQuestion?.question ||
-                "Waiting for the next interview question..."}
-            </h3>
+            <div className="group/question relative mt-1">
+              {questionDisplay.scenario && (
+                <p className="mb-2 line-clamp-3 text-[11px] leading-5 text-slate-600 lg:line-clamp-4">
+                  <span className="font-semibold text-slate-700">Scenario: </span>
+                  {questionDisplay.scenario}
+                </p>
+              )}
+
+              <h3
+                title={questionDisplay.fullText}
+                className="text-[12px] leading-5 font-semibold text-slate-900 line-clamp-2"
+              >
+                {questionDisplay.prompt}
+              </h3>
+
+              {questionDisplay.fullText.length > 110 && (
+                <div className="pointer-events-none absolute left-0 z-20 mt-2 hidden w-full max-w-md rounded-xl bg-slate-900 px-3 py-2 text-[11px] leading-relaxed font-medium text-white shadow-lg group-hover/question:block">
+                  {questionDisplay.fullText}
+                </div>
+              )}
+            </div>
 
             <p className="mt-1 text-[11px] text-slate-500">
               {currentQuestion?.input_mode === "mcq"
