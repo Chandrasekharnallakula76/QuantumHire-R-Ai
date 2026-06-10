@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { ShieldCheck, Loader2, AlertCircle, KeyRound, Mail } from "lucide-react"
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
+import { getApiHeaders, getApiUrl } from "@/lib/api"
 
 interface Props {
   onVerified: (sessionData: any) => void
@@ -72,9 +71,9 @@ export function OTPVerification({ onVerified }: Props) {
     setRequestingOtp(true)
     setError("")
     try {
-      const res = await fetch(`${API_BASE}/api/send-interview`, {
+      const res = await fetch(getApiUrl("/api/send-interview"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           candidate_email: email,
           candidate_name: "Candidate",
@@ -111,9 +110,9 @@ export function OTPVerification({ onVerified }: Props) {
     setVerifying(true)
     setError("")
     try {
-      const res = await fetch(`${API_BASE}/api/verify-otp`, {
+      const res = await fetch(getApiUrl("/api/verify-otp"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           email,
           otp: otpStr,

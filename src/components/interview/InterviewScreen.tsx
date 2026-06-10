@@ -11,8 +11,7 @@ import type {
   FinalResult,
 } from "./types"
 import { generateReportPDF } from "./pdfReport"
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
+import { getApiHeaders, getApiUrl } from "@/lib/api"
 
 // ============================================================================
 // ELEVENLABS TTS
@@ -331,9 +330,9 @@ export function InterviewScreen({
     if (!sessionId) return {}
     setIsSubmittingAnswer(true)
     try {
-      const res = await fetch(`${API_BASE}/api/submit-answer`, {
+      const res = await fetch(getApiUrl("/api/submit-answer"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           session_id: sessionId,
           question_index: questionIndex,
@@ -412,9 +411,9 @@ export function InterviewScreen({
     if (!sessionId || isFinishing) return
     setIsFinishing(true)
     try {
-      const res = await fetch(`${API_BASE}/api/finish-interview`, {
+      const res = await fetch(getApiUrl("/api/finish-interview"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ session_id: sessionId }),
       })
       const data = await res.json()

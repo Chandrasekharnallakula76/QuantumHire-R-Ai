@@ -15,8 +15,7 @@ import {
 import { Orb } from "../ui/orb"
 import * as faceapi from "@vladmandic/face-api"
 import type { Emotions, Question } from "./types"
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
+import { getApiHeaders, getApiUrl } from "@/lib/api"
 const SPEECH_TO_TEXT_LANGUAGE =
   import.meta.env.VITE_SPEECH_TO_TEXT_LANGUAGE || "en-IN"
 
@@ -670,9 +669,9 @@ function VideoStreams({
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), timeoutMs)
 
-        const res = await fetch(`${API_BASE}/api/vitals/frame`, {
+        const res = await fetch(getApiUrl("/api/vitals/frame"), {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getApiHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             session_id: sessionId,
             frame_base64: frameBase64,

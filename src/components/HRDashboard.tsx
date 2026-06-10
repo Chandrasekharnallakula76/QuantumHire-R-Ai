@@ -11,8 +11,7 @@ import {
   Link,
   Copy,
 } from "lucide-react"
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
+import { getApiHeaders, getApiUrl } from "@/lib/api"
 
 interface Props {
   onInterviewSent: () => void
@@ -57,9 +56,9 @@ export function HRDashboard({ onInterviewSent }: Props) {
     setResult(null)
 
     try {
-      const res = await fetch(`${API_BASE}/api/create-interview`, {
+      const res = await fetch(getApiUrl("/api/create-interview"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           candidate_name: candidateName,
           candidate_email: candidateEmail,

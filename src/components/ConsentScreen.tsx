@@ -8,8 +8,7 @@ import {
   Monitor,
   ShieldCheck,
 } from "lucide-react"
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
+import { getApiHeaders, getApiUrl } from "@/lib/api"
 
 interface Props {
   interviewId: string
@@ -46,9 +45,9 @@ export function ConsentScreen({
     setError("")
 
     try {
-      const res = await fetch(`${API_BASE}/api/consent`, {
+      const res = await fetch(getApiUrl("/api/consent"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           interview_id: interviewId,
           candidate_email: candidateEmail,

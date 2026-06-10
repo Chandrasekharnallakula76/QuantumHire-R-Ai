@@ -8,6 +8,7 @@
  *   <script>
  *     CognitiveScreen.init({
  *       apiBase: "https://your-backend.com",         // Backend API URL
+ *       apiKey: "your-x-api-key",                    // Optional backend x-api-key
  *       frontendBase: "https://your-frontend.com",    // Frontend app URL
  *       containerId: "interview-container",           // DOM element ID (optional, creates modal if omitted)
  *       mode: "modal",                                // "modal" | "inline" | "fullscreen"
@@ -43,6 +44,7 @@
 
   var _config = {
     apiBase: "",
+    apiKey: "",
     frontendBase: "",
     containerId: null,
     mode: "modal",       // modal | inline | fullscreen
@@ -216,10 +218,15 @@
       }
 
       var apiBase = _config.apiBase.replace(/\/$/, "");
+      var headers = { "Content-Type": "application/json" };
+
+      if (_config.apiKey) {
+        headers["x-api-key"] = _config.apiKey;
+      }
 
       return fetch(apiBase + "/api/create-interview", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify({
           candidate_name: params.candidateName,
           candidate_email: params.candidateEmail,
@@ -305,7 +312,15 @@
      */
     getResults: function (interviewId) {
       var apiBase = _config.apiBase.replace(/\/$/, "");
-      return fetch(apiBase + "/api/get-results/" + encodeURIComponent(interviewId))
+      var headers = {};
+
+      if (_config.apiKey) {
+        headers["x-api-key"] = _config.apiKey;
+      }
+
+      return fetch(apiBase + "/api/get-results/" + encodeURIComponent(interviewId), {
+        headers: headers,
+      })
         .then(function (res) { return res.json(); });
     },
   };
