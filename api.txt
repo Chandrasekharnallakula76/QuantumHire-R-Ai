@@ -1,0 +1,117 @@
+To add these features to your new project, here is the exact answer regarding the vitals scanning APIs and how to get the interviewer's speaking voice:
+
+1. Is there an API for scanning the face and displaying vitals?
+NO, there is no third-party cloud API or paid external service used to scan the face or calculate the vitals.
+
+Everything is done 100% locally in the user's browser for privacy and speed.
+
+How to add this to your new project:
+To implement face tracking and vitals calculation in your new project, you do not need to register for any API keys. You only need to copy the local setup:
+
+Install these 2 libraries in your new project:
+bash
+npm install onnxruntime-web @vladmandic/face-api
+Copy the file src/onnx/onnx.ts and place it in your project.
+Copy the model files from /public/models/ to your new project's public folder.
+Run the local scanning loops:
+Capture frames from your <video> stream using standard canvas rendering.
+Call getVitals(frames) in your page components just like this project does in startVitalsMonitoring inside Interview.tsx.
+2. How the voice is generated (The Voice API)
+Unlike vitals, yes, the spoken voice IS generated using a real external API! The project uses the ElevenLabs Text-to-Speech (TTS) API to generate the highly realistic human voice.
+
+Here is the exact API configuration and code you can copy to your new project:
+
+The Voice API Details:
+Service: ElevenLabs API
+API Key: sk_05dc65f617d450f4c90bdbc29dba3925e05533504478d06c
+Voice ID (Kabir Voice): 7FroLDTDG92jPfUW6BlQ
+Speed Optimized Model: eleven_turbo_v2_5
+The Voice Code to Copy to Your New Project:
+You can drop this exact function into your new project's interview page to make your avatar speak:
+
+typescript
+const ELEVENLABS_API_KEY = "sk_05dc65f617d450f4c90bdbc29dba3925e05533504478d06c";
+const ELEVENLABS_VOICE_ID = "7FroLDTDG92jPfUW6BlQ";
+const ELEVENLABS_MODEL_ID = "eleven_turbo_v2_5";
+let currentAudio: HTMLAudioElement | null = null;
+const elevenLabsSpeak = async (
+  text: string,
+  onStart: () => void,
+  onEnd: () => void,
+): Promise<void> => {
+  try {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    onStart(); // Start avatar animation/talking state
+    // Request speech audio stream from ElevenLabs
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}/stream`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "audio/mpeg",
+          "Content-Type": "application/json",
+          "xi-api-key": ELEVENLABS_API_KEY,
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: ELEVENLABS_MODEL_ID,
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+            style: 0.0,
+            use_speaker_boost: true,
+          },
+          optimize_streaming_latency: 4, // 4 yields the absolute lowest latency
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`ElevenLabs API error: ${response.status}`);
+    }
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    
+    const audio = new Audio(audioUrl);
+    currentAudio = audio;
+    audio.preload = "auto";
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      currentAudio = null;
+      onEnd(); // Stop avatar animation/talking state
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      currentAudio = null;
+      onEnd();
+    };
+    await audio.play();
+  } catch (error) {
+    console.error("ElevenLabs TTS error:", error);
+    
+    // Fallback: If ElevenLabs fails/runs out of credits, use browser SpeechSynthesis
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onstart = onStart;
+      utterance.onend = onEnd;
+      utterance.onerror = () => onEnd();
+      window.speechSynthesis.speak(utterance);
+    } else {
+      onStart();
+      setTimeout(onEnd, Math.max(1500, text.length * 40));
+    }
+  }
+};
+How to use this voice function:
+Whenever you present a question, call the function like this:
+
+typescript
+elevenLabsSpeak(
+  "Welcome to the interview! Can you tell me about your background?",
+  () => setAvatarSpeaking(true),  // Triggers avatar talking video loop
+  () => setAvatarSpeaking(false)  // Reverts avatar to idle state
+);
+2:56 PM

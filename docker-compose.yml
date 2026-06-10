@@ -1,0 +1,71 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CognitiveScreen AI — Docker Compose
+#
+# Services:
+#   backend   → FastAPI on port 8000
+#   frontend  → React/Vite built, served by nginx on port 80
+#
+# Usage:
+#   docker compose up --build          # first run
+#   docker compose up -d               # background
+#   docker compose down                # stop
+#   docker compose logs -f backend     # watch backend logs
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Python FastAPI Backend ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cognitivescreen_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GMAIL_USER=notification.aiinterview@gmail.com
+      - GMAIL_APP_PASSWORD=qmqmoyzdjffzamsa
+      - ELEVENLABS_API_KEY=sk_05dc65f617d450f4c90bdbc29dba3925e05533504478d06c
+      - ELEVENLABS_VOICE_ID=7FroLDTDG92jPfUW6BlQ
+      - ELEVENLABS_MODEL_ID=eleven_turbo_v2_5
+    volumes:
+      # Mount Models directory so you can update models without rebuilding
+      - ./backend/Models:/app/Models:ro
+      # Mount data files so you can update questions without rebuilding
+      - ./backend/NuggetChallengePack.xlsx:/app/NuggetChallengePack.xlsx:ro
+      - ./backend/ocean.txt:/app/ocean.txt:ro
+      - ./backend/sixteenpf.txt:/app/sixteenpf.txt:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - cognitivescreen_net
+
+  # ── React Frontend (nginx) ──────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Points the frontend at the backend — change to your server IP/domain
+        # for production (e.g. https://api.yourdomain.com)
+        VITE_API_URL: http://localhost:8000
+    container_name: cognitivescreen_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cognitivescreen_net
+
+networks:
+  cognitivescreen_net:
+    driver: bridge

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.git/
+.gitignore
+backend/
+*.md
+*.txt
+*.xlsx
+*.zip
+*.py
+Models/
+.env
+.env.example
+.vscode/

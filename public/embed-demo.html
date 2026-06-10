@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CognitiveScreen AI — Embed Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      color: #e2e8f0;
+      padding: 60px 40px 40px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .hero h1 span { color: #10b981; }
+    .hero p { color: #94a3b8; font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    .section { margin-bottom: 48px; }
+    .section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+    .section p.desc {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .code-block {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 24px;
+      overflow-x: auto;
+      position: relative;
+      border: 1px solid #1e293b;
+    }
+    .code-block pre {
+      color: #e2e8f0;
+      font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      white-space: pre;
+    }
+    .code-block .kw { color: #c084fc; }
+    .code-block .str { color: #34d399; }
+    .code-block .cmt { color: #475569; font-style: italic; }
+    .code-block .tag { color: #60a5fa; }
+    .code-block .attr { color: #fbbf24; }
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: #334155; color: #e2e8f0; }
+    .badge {
+      display: inline-block;
+      background: #10b981;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .demo-frame {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: #92400e;
+      margin-top: 12px;
+    }
+    .note strong { color: #78350f; }
+    .params-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+    .params-table th {
+      background: #f8fafc;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 2px solid #e2e8f0;
+      color: #334155;
+    }
+    .params-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    .params-table td code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      color: #7c3aed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1><span>CognitiveScreen AI</span> — Embed Guide</h1>
+    <p>Drop the AI interview platform into any website, LMS, or HR portal with a single script tag or iframe.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- METHOD 1: Script Tag -->
+    <div class="section">
+      <span class="badge">Recommended</span>
+      <h2>Method 1 — Script Tag (Auto-Init)</h2>
+      <p class="desc">Paste this into your HTML. The widget auto-initializes from data attributes. Replace <code>YOUR_FRONTEND_URL</code> with your deployed frontend URL.</p>
+
+      <div class="code-block" id="code-method1">
+        <button class="copy-btn" onclick="copyCode('code-method1')">Copy</button>
+<pre><span class="cmt">&lt;!-- CognitiveScreen AI Interview Widget --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="str">"cs-interview"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://YOUR_FRONTEND_URL/embed.js"</span>
+  <span class="attr">data-container</span>=<span class="str">"#cs-interview"</span>
+  <span class="attr">data-email</span>=<span class="str">"candidate@example.com"</span>
+  <span class="attr">data-name</span>=<span class="str">"John Doe"</span>
+  <span class="attr">data-role</span>=<span class="str">"Sales"</span>
+  <span class="attr">data-height</span>=<span class="str">"100vh"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/script&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- METHOD 2: JavaScript API -->
+    <div class="section">
+      <h2>Method 2 — JavaScript API</h2>
+      <p class="desc">Full programmatic control with callbacks for interview completion and vitals data.</p>
+
+      <div class="code-block" id="code-method2">
+        <button class="copy-btn" onclick="copyCode('code-method2')">Copy</button>
+<pre><span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="str">"interview-box"</span><span class="tag">&gt;&lt;/div&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://YOUR_FRONTEND_URL/embed.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+
+<span class="tag">&lt;script&gt;</span>
+  CognitiveScreen.init({
+    container: <span class="str">'#interview-box'</span>,
+    email:  <span class="str">'candidate@company.com'</span>,
+    name:   <span class="str">'Jane Smith'</span>,
+    role:   <span class="str">'Project Management'</span>,
+    width:  <span class="str">'100%'</span>,
+    height: <span class="str">'700px'</span>,
+
+    <span class="cmt">// Called when interview finishes</span>
+    onComplete: <span class="kw">function</span>(result) {
+      console.log(<span class="str">'Score:'</span>, result.total_score);
+      console.log(<span class="str">'Result:'</span>, result.result);
+    },
+
+    <span class="cmt">// Called with real-time vitals data</span>
+    onVitals: <span class="kw">function</span>(vitals) {
+      console.log(<span class="str">'Heart Rate:'</span>, vitals.hr);
+    }
+  });
+<span class="tag">&lt;/script&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- METHOD 3: Raw iframe -->
+    <div class="section">
+      <h2>Method 3 — Raw iframe</h2>
+      <p class="desc">If you can't load external scripts, use a plain iframe. Camera/mic permissions are required.</p>
+
+      <div class="code-block" id="code-method3">
+        <button class="copy-btn" onclick="copyCode('code-method3')">Copy</button>
+<pre><span class="tag">&lt;iframe</span>
+  <span class="attr">src</span>=<span class="str">"https://YOUR_FRONTEND_URL/#/embed?email=candidate@example.com&amp;name=John+Doe&amp;role=Sales"</span>
+  <span class="attr">width</span>=<span class="str">"100%"</span>
+  <span class="attr">height</span>=<span class="str">"700"</span>
+  <span class="attr">style</span>=<span class="str">"border:none; border-radius:12px;"</span>
+  <span class="attr">allow</span>=<span class="str">"camera; microphone; display-capture; autoplay; fullscreen"</span>
+  <span class="attr">allowfullscreen</span>
+<span class="tag">&gt;&lt;/iframe&gt;</span></pre>
+      </div>
+
+      <div class="note">
+        <strong>Important:</strong> The <code>allow="camera; microphone"</code> attribute is required for the webcam vitals scan and voice recording to work inside the iframe.
+      </div>
+    </div>
+
+    <!-- PARAMETERS TABLE -->
+    <div class="section">
+      <h2>Configuration Parameters</h2>
+      <table class="params-table">
+        <thead>
+          <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>container</code></td><td>string | Element</td><td>—</td><td>CSS selector or DOM element to mount the widget into</td></tr>
+          <tr><td><code>email</code></td><td>string</td><td><code>""</code></td><td>Pre-fill candidate email on the OTP screen</td></tr>
+          <tr><td><code>name</code></td><td>string</td><td><code>""</code></td><td>Candidate name (shown in face HUD and results)</td></tr>
+          <tr><td><code>role</code></td><td>string</td><td><code>"General"</code></td><td>Interview role category for question selection</td></tr>
+          <tr><td><code>width</code></td><td>string</td><td><code>"100%"</code></td><td>Widget width (CSS value)</td></tr>
+          <tr><td><code>height</code></td><td>string</td><td><code>"100vh"</code></td><td>Widget height (CSS value)</td></tr>
+          <tr><td><code>theme</code></td><td>string</td><td><code>"dark"</code></td><td>Color theme: <code>dark</code> or <code>light</code></td></tr>
+          <tr><td><code>onComplete</code></td><td>function</td><td>—</td><td>Callback when interview finishes (receives result object)</td></tr>
+          <tr><td><code>onVitals</code></td><td>function</td><td>—</td><td>Callback for real-time vitals updates</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- LIVE DEMO -->
+    <div class="section">
+      <h2>Live Demo</h2>
+      <p class="desc">This is the actual widget embedded on this page via iframe.</p>
+      <div class="demo-frame">
+        <iframe
+          src="/#/embed"
+          width="100%"
+          height="700"
+          style="border: none;"
+          allow="camera; microphone; display-capture; autoplay; fullscreen"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function copyCode(blockId) {
+      var block = document.getElementById(blockId);
+      var pre = block.querySelector('pre');
+      var text = pre.innerText;
+      navigator.clipboard.writeText(text).then(function() {
+        var btn = block.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
